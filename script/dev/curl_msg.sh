@@ -26,11 +26,11 @@ curl -X POST \
     "msg_bodies": [
     {
        "@type": "type.googleapis.com/google.protobuf.StringValue",
-       "value": "hello"
+       "value": "offline"
      },
      {
        "@type": "type.googleapis.com/google.protobuf.StringValue",
-       "value": "world"
+       "value": "test2"
      }
     ],
     "msg_options": 7,

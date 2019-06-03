@@ -4,9 +4,14 @@ start kafka: `docker-compose -f docker-compose-single-broker.yml up -d`
 close kafka: `docker-compose down -v`
 
 # msg
-项目还未完成，代码量很少，有兴趣的可以看看。
+The project is not yet complete.
 
-TODO或者备忘:
+项目还未完成，代码量很少，有兴趣的可以稍微看看。
+
+# Install/Preview video
+[![Watch the video](https://img.youtube.com/vi/zMwFZMve88I/maxresdefault.jpg)](https://youtu.be/zMwFZMve88I)
+
+# TODO或者备忘
 - kafka换到nats-streaming
 - redis的存储结构要设计成支持集群的
 - horn服务的雏形 (推送服务，在存储离线的同时要根据platform情况触发)
