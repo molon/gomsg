@@ -52,7 +52,7 @@ var (
 	_ = pflag.String("consumer.dlq-topic", "molon-msg-dlq", "dead letter queue")
 
 	// redis
-	_ = pflag.String("redis.address", "0.0.0.0", "")
+	_ = pflag.String("redis.address", "127.0.0.1", "")
 	_ = pflag.Int("redis.port", 9379, "")
 
 	// gRPC servers
