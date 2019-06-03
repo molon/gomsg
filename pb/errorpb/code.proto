@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package errorpb;
+option go_package = "github.com/molon/gomsg/pb/errorpb";
+
+enum Code {
+    // 没错
+    NONE = 0;
+
+    // 未知
+    UNKNOWN = 1;
+
+    // 限时内没有ack
+    NO_ACK = 2;
+
+    // 发送消息堆积
+    TOO_MANY_MSGS_TO_BE_SENT = 3;
+
+    // 不存在的会话
+    SESSION_NOT_FOUND = 4;
+
+    // 相同平台的重复会话
+    NEW_SESSION_ON_SAME_PLATFORM = 5;
+}
+
+message Detail {
+    Code code = 1;
+}

@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package msgpb;
+option go_package = "github.com/molon/gomsg/pb/msgpb";
+
+import "google/protobuf/any.proto";
+import "errorpb/code.proto";
+
+// 客户端唯一需要关心的GRPC方法，长连接推送通道
+service Msg {
+    // 消息传递通道
+	rpc LoopV1(stream ClientPayload) returns (stream ServerPayload) {}
+}
+
+// Ack反馈消息
+message Ack {
+    string seq = 1; 
+}
+
+// 心跳，这个是由于一些语言的gRPC skd不支持客户端的keepalive
+// 所以客户端检测服务端存活就需要自行ping，服务端这里简单的返回pong而已
+message Ping {}
+message Pong {
+    errorpb.Code code = 1;
+    string msg = 2;
+}
+
+// 会话需要订阅某房间的业务逻辑时需要发送此消息
+message SubRoomRequest {
+    string room = 1; 
+    google.protobuf.Any params = 2;
+}
+
+// 通用反馈，跟对一些后缀为Request的使用
+message CommonResponse {
+    string seq = 1;
+    errorpb.Code code = 2;
+    string msg = 3;
+}
+
+// 客户端发送给loop端
+message ClientPayload{
+    // 唯一标识，由客户端生成，一般仅留作ack或者resp使用
+    string seq = 1;
+
+    oneof Body {
+        // 反馈ack消息
+        Ack ack = 11;
+        // 心跳
+        Ping ping = 12;
+        // 会话要求订阅某房间
+        SubRoomRequest sub = 13;
+	}
+}
+
+// loop端发送给客户端(实为N个业务消息组成)
+message ServerPayload{
+    // 唯一标识，由loop端内部生成，一般仅留作ack或者resp使用
+    string seq = 1;
+    // 是否需要ack
+    bool need_ack = 2;
+
+    oneof Body {
+        // 心跳
+        Pong pong = 11;
+        // 业务消息组
+        MessagesWrapper msgs_wrapper = 12;
+        // 会话订阅反馈
+        CommonResponse sub_resp = 13;
+    }
+}
+
+// 消息选项
+enum MessageOption {
+    NONE = 0;
+    // 1 << 0 需要客户端ack的
+    NEED_ACK = 1;
+    // 1 << 1 客户端不在线则需要存储为离线消息的
+    NEED_OFFLINE = 2;
+    // 1 << 2 客户端不在线则需要投递通知的 (例如apns)
+    NEED_NOTIFICATION = 4;
+}
+
+// 消息
+message Message {
+    // 消息唯一标识，一般由station端分发时生成，客户端去重使用以及离线消息存储的依据
+    string seq = 1;
+    // 选项
+    MessageOption options = 2;
+    // 消息体
+    google.protobuf.Any body = 3;
+}
+
+// 消息列表wrapper
+message MessagesWrapper {
+    repeated Message msgs = 1;
+}
