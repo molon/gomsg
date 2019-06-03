@@ -10,7 +10,7 @@ type Config struct {
 
 func (cfg *Config) Valid() error {
 	if len(cfg.Producer.Topic) < 1 {
-		return errors.Wrapf("producer.topic must be non-empty")
+		return errors.Errorf("producer.topic must be non-empty")
 	}
 
 	return nil

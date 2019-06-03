@@ -119,7 +119,7 @@ func (s *loopServer) LoopV1(stream msgpb.Msg_LoopV1Server) error {
 		Sid:    sid,
 	})
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer func(uid string) {
 		// 删除会话登记，因为很可能是因为ctx触发的，但是disconnect是一定要执行的，所以这里不用ctx
@@ -163,7 +163,7 @@ func grpcLoop(ctx context.Context, sess *Session, stream msgpb.Msg_LoopV1Server)
 				}
 				if err != nil {
 					// 客户端的ctx的结束也会通过此处反馈
-					sess.writeLoopError(errors.Wrap(err))
+					sess.writeLoopError(errors.WithStack(err))
 					return
 				}
 

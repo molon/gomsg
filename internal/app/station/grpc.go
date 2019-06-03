@@ -21,7 +21,7 @@ func (s *grpcServer) Connect(ctx context.Context, in *stationpb.ConnectRequest) 
 	// 尝试auth先
 	out, err := global.authCli.Auth(ctx, &empty.Empty{})
 	if err != nil {
-		return nil, errors.Wrap(err)
+		return nil, errors.WithStack(err)
 	}
 
 	if len(out.GetUid()) < 1 {

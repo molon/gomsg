@@ -87,7 +87,7 @@ func (s *grpcServer) PushMessages(ctx context.Context, in *boatpb.PushMessagesRe
 
 	dur, err := ptypes.Duration(in.GetAckWait())
 	if err != nil {
-		return nil, errors.Wrap(err)
+		return nil, errors.WithStack(err)
 	}
 
 	if err := sess.Send(sm, dur); err != nil {
@@ -110,7 +110,7 @@ func (s *grpcServer) Kickout(ctx context.Context, in *boatpb.KickoutRequest) (*e
 		WithDetails(&errorpb.Detail{
 			Code: in.Code,
 		})
-	sess.Kickout(errors.Wrap(st.Err()))
+	sess.Kickout(errors.WithStack(st.Err()))
 
 	return &empty.Empty{}, nil
 }
@@ -126,5 +126,5 @@ func notFoundErr(sid string) error {
 		WithDetails(&errorpb.Detail{
 			Code: errorpb.Code_SESSION_NOT_FOUND,
 		})
-	return errors.Wrap(st.Err())
+	return errors.WithStack(st.Err())
 }

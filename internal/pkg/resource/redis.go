@@ -28,7 +28,7 @@ func NewRedisPool(logger *logrus.Logger) *redis.Pool {
 				redis.DialWriteTimeout(500*time.Millisecond),
 			)
 			if err != nil {
-				return nil, errors.Wrap(err)
+				return nil, errors.WithStack(err)
 			}
 			return conn, nil
 		},
@@ -38,7 +38,7 @@ func NewRedisPool(logger *logrus.Logger) *redis.Pool {
 				return nil
 			}
 			_, err := c.Do("PING")
-			return errors.Wrap(err)
+			return errors.WithStack(err)
 		},
 	}
 }

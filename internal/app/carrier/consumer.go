@@ -178,7 +178,7 @@ func process(ctx context.Context, pb *mqpb.Payload) (out *mqpb.Payload, rerr err
 	defer func() {
 		// 发现panic，直接让mq重试即可
 		if r := recover(); r != nil {
-			rerr = errors.Wrap(r.(error))
+			rerr = errors.WithStack(r.(error))
 		}
 	}()
 
@@ -201,7 +201,7 @@ func process(ctx context.Context, pb *mqpb.Payload) (out *mqpb.Payload, rerr err
 			return pb, nil
 		}
 	default:
-		return nil, errors.Wrapf("Unknown payload type: %T", t)
+		return nil, errors.Errorf("Unknown payload type: %T", t)
 	}
 
 	return nil, nil

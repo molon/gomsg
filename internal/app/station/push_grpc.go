@@ -69,7 +69,7 @@ func (s *pushGrpcServer) Push(ctx context.Context, in *pushpb.PushRequest) (*emp
 
 		b, err := proto.Marshal(pb)
 		if err != nil {
-			return nil, errors.Wrap(err)
+			return nil, errors.WithStack(err)
 		}
 
 		pm := &sarama.ProducerMessage{
@@ -83,7 +83,7 @@ func (s *pushGrpcServer) Push(ctx context.Context, in *pushpb.PushRequest) (*emp
 
 	// 投递至mq
 	if err := global.producer.SendMessages(pms); err != nil {
-		return nil, errors.Wrap(err)
+		return nil, errors.WithStack(err)
 	}
 
 	return &empty.Empty{}, nil

@@ -12,7 +12,7 @@ package carrier
 // 	b, err := proto.Marshal(pb)
 // 	if err != nil {
 // 		global.logger.WithError(err).Fatalf("proto.Marshal")
-// 		return errors.Wrap(err)
+// 		return errors.WithStack(err)
 // 	}
 
 // 	pm := &sarama.ProducerMessage{

@@ -49,7 +49,7 @@ func kickoutSession(ctx context.Context, in *mqpb.KickoutSession) error {
 			return nil
 		}
 
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	return nil

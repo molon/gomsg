@@ -29,20 +29,20 @@ func InitStore(
 func (s *Store) init(ctx context.Context) error {
 	conn, err := s.redisPool.GetContext(ctx)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer conn.Close()
 
 	if err := writeLua.Load(conn); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	if err := deleteLua.Load(conn); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	if err := cleanLua.Load(conn); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	return nil

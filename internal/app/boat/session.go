@@ -81,7 +81,7 @@ func (sess *Session) Send(m *msgpb.ServerPayload, ackWait time.Duration) error {
 			WithDetails(&errorpb.Detail{
 				Code: errorpb.Code_TOO_MANY_MSGS_TO_BE_SENT,
 			})
-		return errors.Wrap(st.Err())
+		return errors.WithStack(st.Err())
 	}
 
 	if !m.GetNeedAck() {
@@ -112,7 +112,7 @@ func (sess *Session) Send(m *msgpb.ServerPayload, ackWait time.Duration) error {
 			WithDetails(&errorpb.Detail{
 				Code: errorpb.Code_NO_ACK,
 			})
-		return errors.Wrap(st.Err())
+		return errors.WithStack(st.Err())
 	}
 }
 

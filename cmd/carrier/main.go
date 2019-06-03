@@ -68,7 +68,7 @@ func StartBoatClientStore(ctx context.Context, logger *logrus.Logger, etcdCli *e
 		func(target string, opts ...grpc.DialOption) (interface{}, io.Closer, error) {
 			conn, err := grpc.DialContext(ctx, target, append(dialOptions, opts...)...)
 			if err != nil {
-				return nil, nil, errors.Wrap(err)
+				return nil, nil, errors.WithStack(err)
 			}
 
 			return boatpb.NewBoatClient(conn), conn, nil

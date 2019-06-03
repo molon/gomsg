@@ -28,28 +28,28 @@ func omnKey(seq string) string {
 
 func (s *Store) Delete(ctx context.Context, uid string, platform string, seqs []string) error {
 	if len(seqs) <= 0 {
-		return errors.Wrapf("seqs is empty")
+		return errors.Errorf("seqs is empty")
 	}
 
 	conn, err := s.redisPool.GetContext(ctx)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer conn.Close()
 
 	for _, seq := range seqs {
 		if err := deleteLua.SendHash(conn, upomsKey(uid, platform), ommKey(seq), omnKey(seq), seq); err != nil {
-			return errors.Wrap(err)
+			return errors.WithStack(err)
 		}
 	}
 
 	if err := conn.Flush(); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	for _ = range seqs {
 		if _, err := conn.Receive(); err != nil {
-			return errors.Wrap(err)
+			return errors.WithStack(err)
 		}
 	}
 
@@ -58,12 +58,12 @@ func (s *Store) Delete(ctx context.Context, uid string, platform string, seqs []
 
 func (s *Store) Clean(ctx context.Context, uid string, expire time.Duration, platformToMaxOMCount map[string]int) error {
 	if len(platformToMaxOMCount) <= 0 {
-		return errors.Wrapf("platformToMaxOMCount is empty")
+		return errors.Errorf("platformToMaxOMCount is empty")
 	}
 
 	conn, err := s.redisPool.GetContext(ctx)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer conn.Close()
 
@@ -71,18 +71,18 @@ func (s *Store) Clean(ctx context.Context, uid string, expire time.Duration, pla
 
 	for platform, maxOMCount := range platformToMaxOMCount {
 		if err := cleanLua.SendHash(conn, upomsKey(uid, platform), expTs, maxOMCount); err != nil {
-			return errors.Wrap(err)
+			return errors.WithStack(err)
 		}
 	}
 
 	if err := conn.Flush(); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	// 只需要关心执行次数即可
 	for _ = range platformToMaxOMCount {
 		if _, err := conn.Receive(); err != nil {
-			return errors.Wrap(err)
+			return errors.WithStack(err)
 		}
 	}
 
@@ -96,7 +96,7 @@ func (s *Store) Write(ctx context.Context,
 ) error {
 	conn, err := s.redisPool.GetContext(ctx)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer conn.Close()
 
@@ -106,7 +106,7 @@ func (s *Store) Write(ctx context.Context,
 	*/
 	m, err := proto.Marshal(msg)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	seq := msg.GetSeq()
@@ -117,7 +117,7 @@ func (s *Store) Write(ctx context.Context,
 	if _, err := writeLua.Do(conn,
 		upomsKey(uid, platform), ommKey(seq), omnKey(seq),
 		seq, m, ts, exp, expAt); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -127,7 +127,7 @@ func (s *Store) Write(ctx context.Context,
 func (s *Store) Read(ctx context.Context, uid string, platform string, expire time.Duration, readCount int64) ([]*msgpb.Message, func(context.Context) error, error) {
 	conn, err := s.redisPool.GetContext(ctx)
 	if err != nil {
-		return nil, nil, errors.Wrap(err)
+		return nil, nil, errors.WithStack(err)
 	}
 	defer conn.Close()
 
@@ -142,7 +142,7 @@ func (s *Store) Read(ctx context.Context, uid string, platform string, expire ti
 		conn.Do("ZRANGEBYSCORE", upomsKey(uid, platform), expTs, "+inf", "LIMIT", "0", readCount),
 	)
 	if err != nil {
-		return nil, nil, errors.Wrap(err)
+		return nil, nil, errors.WithStack(err)
 	}
 
 	if len(seqs) <= 0 {
@@ -158,7 +158,7 @@ func (s *Store) Read(ctx context.Context, uid string, platform string, expire ti
 		conn.Do("MGET", ommKeys...),
 	)
 	if err != nil {
-		return nil, nil, errors.Wrap(err)
+		return nil, nil, errors.WithStack(err)
 	}
 
 	msgs := []*msgpb.Message{}
@@ -166,7 +166,7 @@ func (s *Store) Read(ctx context.Context, uid string, platform string, expire ti
 		if m != nil {
 			pb := &msgpb.Message{}
 			if err := proto.Unmarshal(m, pb); err != nil {
-				return nil, nil, errors.Wrap(err)
+				return nil, nil, errors.WithStack(err)
 			}
 
 			msgs = append(msgs, pb)

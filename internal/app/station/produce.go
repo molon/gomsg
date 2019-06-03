@@ -13,10 +13,10 @@ import (
 
 func pubUidSids(uid string, sids []string, fillBody func(payload *mqpb.Payload, uid string, sid string)) error {
 	if len(uid) < 1 {
-		return errors.Wrapf("uid is empty")
+		return errors.Errorf("uid is empty")
 	}
 	if len(sids) <= 0 {
-		return errors.Wrapf("sids is empty")
+		return errors.Errorf("sids is empty")
 	}
 
 	now := ptypes.TimestampNow()
@@ -32,7 +32,7 @@ func pubUidSids(uid string, sids []string, fillBody func(payload *mqpb.Payload, 
 
 		b, err := proto.Marshal(mw)
 		if err != nil {
-			return errors.Wrap(err)
+			return errors.WithStack(err)
 		}
 
 		m := &sarama.ProducerMessage{
@@ -45,7 +45,7 @@ func pubUidSids(uid string, sids []string, fillBody func(payload *mqpb.Payload, 
 	}
 
 	if err := global.producer.SendMessages(msgs); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	return nil

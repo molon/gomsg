@@ -76,7 +76,7 @@ func sendOfflineToSession(ctx context.Context, in *mqpb.SendOfflineToSession) er
 				}
 
 				// 返回错误，等待重试
-				return errors.Wrap(err)
+				return errors.WithStack(err)
 			}
 
 			// 清理已读取的

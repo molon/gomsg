@@ -22,7 +22,7 @@ func boatClient(boatId string) (boatpb.BoatClient, bool, error) {
 		return cli.(boatpb.BoatClient), true, nil
 	}
 
-	return nil, ok, errors.Wrapf("Boat(%s) has not connected yet", boatId)
+	return nil, ok, errors.Errorf("Boat(%s) has not connected yet", boatId)
 }
 
 func equalErrCode(err error, code errorpb.Code) bool {

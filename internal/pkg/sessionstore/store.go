@@ -49,18 +49,18 @@ func NewStore(
 
 func (ss *Store) SetSession(ctx context.Context, sess Session) error {
 	if !sess.Valid() {
-		return errors.Wrapf("session is not valid")
+		return errors.Errorf("session is not valid")
 	}
 
 	conn, err := ss.redisPool.GetContext(ctx)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer conn.Close()
 
 	// 存入即可，奇怪的是 redis 不支持 HSET k hk hv NX 命令
 	if _, err := conn.Do("HSETNX", ussKey(sess.Uid), sess.Sid, fmt.Sprintf("%s-%s", sess.Platform, sess.Bid)); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -68,7 +68,7 @@ func (ss *Store) SetSession(ctx context.Context, sess Session) error {
 
 func (ss *Store) DeleteSessions(ctx context.Context, uid string, sids []string) error {
 	if len(uid) < 1 {
-		return errors.Wrap(ErrNoUid)
+		return errors.WithStack(ErrNoUid)
 	}
 
 	if len(sids) <= 0 {
@@ -78,7 +78,7 @@ func (ss *Store) DeleteSessions(ctx context.Context, uid string, sids []string) 
 	// 建立连接
 	conn, err := ss.redisPool.GetContext(ctx)
 	if err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 	defer conn.Close()
 
@@ -89,7 +89,7 @@ func (ss *Store) DeleteSessions(ctx context.Context, uid string, sids []string) 
 	}
 
 	if _, err := conn.Do("HDEL", dArgs...); err != nil {
-		return errors.Wrap(err)
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -98,7 +98,7 @@ func (ss *Store) DeleteSessions(ctx context.Context, uid string, sids []string) 
 // 获取session信息，map 形式 SidToSession
 func (ss *Store) GetSidToSession(ctx context.Context, uid string, opts ...GetOption) (map[string]Session, error) {
 	if len(uid) < 1 {
-		return nil, errors.Wrap(ErrNoUid)
+		return nil, errors.WithStack(ErrNoUid)
 	}
 
 	ops := &getOptions{}
@@ -113,7 +113,7 @@ func (ss *Store) GetSidToSession(ctx context.Context, uid string, opts ...GetOpt
 
 	conn, err := ss.redisPool.GetContext(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err)
+		return nil, errors.WithStack(err)
 	}
 	defer conn.Close()
 
@@ -121,7 +121,7 @@ func (ss *Store) GetSidToSession(ctx context.Context, uid string, opts ...GetOpt
 	if len(ops.sids) < 1 {
 		sidToDetail, err = redis.StringMap(conn.Do("HGETALL", ussKey))
 		if err != nil {
-			return nil, errors.Wrap(err)
+			return nil, errors.WithStack(err)
 		}
 	} else {
 		args := []interface{}{ussKey}
@@ -131,7 +131,7 @@ func (ss *Store) GetSidToSession(ctx context.Context, uid string, opts ...GetOpt
 
 		details, err := redis.Strings(conn.Do("HMGET", args...))
 		if err != nil {
-			return nil, errors.Wrap(err)
+			return nil, errors.WithStack(err)
 		}
 
 		sidToDetail = map[string]string{}
@@ -165,7 +165,7 @@ func (ss *Store) GetSidToSession(ctx context.Context, uid string, opts ...GetOpt
 
 	if len(dArgs) > 1 {
 		if _, err := conn.Do("HDEL", dArgs...); err != nil {
-			return nil, errors.Wrap(err)
+			return nil, errors.WithStack(err)
 		}
 	}
 
@@ -176,7 +176,7 @@ func (ss *Store) GetSidToSession(ctx context.Context, uid string, opts ...GetOpt
 func (ss *Store) GetPlatformToSessions(ctx context.Context, uid string, opts ...GetOption) (map[string][]Session, error) {
 	sesses, err := ss.GetSidToSession(ctx, uid, opts...)
 	if err != nil {
-		return nil, errors.Wrap(err)
+		return nil, errors.WithStack(err)
 	}
 
 	platformToSessions := map[string][]Session{}
@@ -196,7 +196,7 @@ func (ss *Store) GetPlatformToSessions(ctx context.Context, uid string, opts ...
 func (ss *Store) GetSessions(ctx context.Context, uid string, opts ...GetOption) ([]Session, error) {
 	sesses, err := ss.GetSidToSession(ctx, uid, opts...)
 	if err != nil {
-		return nil, errors.Wrap(err)
+		return nil, errors.WithStack(err)
 	}
 
 	sessions := []Session{}

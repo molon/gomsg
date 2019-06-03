@@ -40,35 +40,35 @@ type Config struct {
 
 func (cfg *Config) Validate() error {
 	if cfg.Boat.AckWait < 250*time.Millisecond {
-		return errors.Wrapf("boat.ack-wait must >= 250ms")
+		return errors.Errorf("boat.ack-wait must >= 250ms")
 	}
 
 	if cfg.Consumer.Concurrency <= 0 {
-		return errors.Wrapf("consumer.concurrency must > 0")
+		return errors.Errorf("consumer.concurrency must > 0")
 	}
 
 	if cfg.Consumer.Topic == cfg.Consumer.RetryTopic {
-		return errors.Wrapf("consumer.topic cant equal to consumer.retry-topic")
+		return errors.Errorf("consumer.topic cant equal to consumer.retry-topic")
 	}
 
 	if cfg.Consumer.RetryConcurrency <= 0 {
-		return errors.Wrapf("consumer.retry-concurrency must > 0")
+		return errors.Errorf("consumer.retry-concurrency must > 0")
 	}
 
 	if cfg.Consumer.MaxRetries <= 0 {
-		return errors.Wrapf("consumer.max-retries must > 0")
+		return errors.Errorf("consumer.max-retries must > 0")
 	}
 
 	if len(cfg.Platform.Names) <= 0 {
-		return errors.Wrapf("platform.names is empty")
+		return errors.Errorf("platform.names is empty")
 	}
 
 	if cfg.Offline.Expire <= 0 {
-		return errors.Wrapf("offline.expire must > 0")
+		return errors.Errorf("offline.expire must > 0")
 	}
 
 	if cfg.Offline.BatchCount <= 10 {
-		return errors.Wrapf("offline.batch-count must > 10")
+		return errors.Errorf("offline.batch-count must > 10")
 	}
 
 	// 整理平台配置为便利版本
@@ -76,7 +76,7 @@ func (cfg *Config) Validate() error {
 	for _, name := range cfg.Platform.Names {
 		maxOfflineCount, ok := cfg.Platform.MaxOfflineCounts[name]
 		if !ok {
-			return errors.Wrapf("max-offline-count of %s is not set", name)
+			return errors.Errorf("max-offline-count of %s is not set", name)
 		}
 
 		cfg.pcfgs[name] = platformConfig{
