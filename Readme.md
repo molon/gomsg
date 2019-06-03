@@ -54,7 +54,7 @@ The project is not yet complete.
 - 这样的好处： 因为`to_uid`消息大部分是会消费成功的，又不会像`to_uid_platform`那么的细粒度，能增加吞吐量，又能避免因`部分platform`消费失败而产生的整个`to_uid`消息的重试。
 - 最后超过一定`retry_count`实在消费失败的话，就丢进`dlq`死信队列，等待报警发现，人工来处理了。
 
-# redis结构设计(设计上暂不支持redis集群，真需要时候再考虑)
+# redis结构设计(设计上暂不支持redis集群)
 
 ## 连接信息
 ```
