@@ -15,7 +15,8 @@ The project is not yet complete.
 - 离线消息存储
 - 在此基础上开发的简易聊天系统 [gochat](https://github.com/molon/gochat)
 
-# Install/Preview video, Click to watch
+# Install/Preview video, Click to watch   
+不想看安装过程可以直接看 1:02 和 2:00   
 [![Watch the video](https://img.youtube.com/vi/zMwFZMve88I/maxresdefault.jpg)](https://youtu.be/zMwFZMve88I)
   
 # Don't care the words below (以下很乱，还不一定对，暂时的笔记罢了，不用怎么关心)
