@@ -1,6 +1,7 @@
-kafka dev env:
+kafka dev env:   
 http://wurstmeister.github.io/kafka-docker/   
-docker-compose -f docker-compose-single-broker.yml up -d   
+start kafka: `docker-compose -f docker-compose-single-broker.yml up -d`   
+close kafka: `docker-compose down -v`
 
 # msg
 项目还未完成，代码量很少，有兴趣的可以看看。
