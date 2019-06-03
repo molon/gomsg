@@ -3,10 +3,17 @@ clone: `git clone git@github.com:wurstmeister/kafka-docker.git`
 start kafka: `docker-compose -f docker-compose-single-broker.yml up -d`   
 close kafka: `docker-compose down -v`
 
-# msg
+# gomsg
 The project is not yet complete.
 
-项目还未完成，代码量很少，有兴趣的可以稍微看看。
+项目还未完成，文档也没好好整理，代码量很少，有兴趣的可以稍微看看。
+
+分布式推送服务:
+- 基于gRPC，轻量级
+- 无限横向扩展
+- 单用户多平台使用
+- 离线消息存储
+- 在此基础上开发的简易聊天系统 [gochat](https://github.com/molon/gochat)
 
 # Install/Preview video, Click to watch
 [![Watch the video](https://img.youtube.com/vi/zMwFZMve88I/maxresdefault.jpg)](https://youtu.be/zMwFZMve88I)
