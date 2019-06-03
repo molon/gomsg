@@ -14,6 +14,7 @@ GENERATOR		:= $(DOCKER_RUNNER) $(DOCKER_GENERATOR)
 
 # configuration env
 ETCD_CONTAINER_NAME := gomsg-etcd
+JAEGER_CONTAINER_NAME := gomsg-jaeger
 REDIS_CONTAINER_NAME := gomsg-redis
 
 .PHONY: etcd
@@ -47,6 +48,18 @@ redis:
         redis:latest \
         redis-server --appendonly yes
 
+.PHONY: jaeger
+jaeger:
+	@docker stop $(JAEGER_CONTAINER_NAME) || true
+	@docker rm $(JAEGER_CONTAINER_NAME) || true
+	@docker run -d \
+		 --restart=always \
+		 --name $(JAEGER_CONTAINER_NAME) \
+		 -p 24268:14268 \
+		 -p 6775:5775/udp -p 7831:6831/udp -p 7832:6832/udp -p 6778:5778 -p 26686:16686 -p 10411:9411 \
+		 -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
+		 jaegertracing/all-in-one:latest
+	
 # protobuf gentool
 .PHONY: internal_pb
 internal_pb:

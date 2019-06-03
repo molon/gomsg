@@ -28,7 +28,7 @@ var (
 
 	// Jaeger
 	_ = pflag.String("jaeger.service-name", "gomsg_carrier", "")
-	_ = pflag.String("jaeger.collector-endpoint", "http://localhost:14268", "endpoint of Jaeger collector")
+	_ = pflag.String("jaeger.collector-endpoint", "http://localhost:24268", "endpoint of Jaeger collector")
 
 	// platform
 	_                            = pflag.StringSlice("platform.names", []string{"mobile", "desktop"}, "")
