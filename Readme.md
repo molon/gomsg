@@ -8,10 +8,12 @@ The project is not yet complete.
 
 项目还未完成，代码量很少，有兴趣的可以稍微看看。
 
-# Install/Preview video
+# Install/Preview video, Click to watch
 [![Watch the video](https://img.youtube.com/vi/zMwFZMve88I/maxresdefault.jpg)](https://youtu.be/zMwFZMve88I)
+  
+# Don't care the words below (以下很乱，还不一定对，暂时的笔记罢了，不用怎么关心)
 
-# TODO或者备忘
+## TODO或者备忘
 - kafka换到nats-streaming
 - redis的存储结构要设计成支持集群的
 - horn服务的雏形 (推送服务，在存储离线的同时要根据platform情况触发)
@@ -20,9 +22,8 @@ The project is not yet complete.
 - 需要测试boat能单机连接多少，若10W，那就需要去测试10W的用户瞬间全部对station执行disconnect，redis是否撑得住，应该需要更好的法子。
 - 存在离线存储的任务比拉取离线任务晚执行的可能性，如果有特别强的要求，可以考虑单uid+platform下的分布式锁保证顺序同步，但是遇见处理失败重试的场景下也没辙。
 - 倘若boat服务没挂，但是和etcd有临时的断开，在断开时间里，消息会丢失，解决法子就是发现断开，立即关闭自身，有必要么？
-  
-------------------------------------------- 以下很乱，不一定对 ----------------------------
-# 整理思维
+
+## 整理思维
 - station先检查目的用户是否存在，如果不存在则直接向 存储离线消息 且 根据消息类型决定 是否向消息队列投递通知任务
 - 如果发现用户存在，则向消息队列投递下发任务，但是此下发任务的粒度应该以session还是uid呢
 - 如果是uid，好处是没那么占消息队列的吞吐能力，但是如果一个uid的多session有一个失败，之后所有session的处理都可能会重复进行
@@ -35,7 +36,7 @@ The project is not yet complete.
 - station的分发消息rpc入口调用速度加快 和 尽可能的在投递到消息队列之前来处理离线消息以增加吞吐量 两者相比，前者会更重要一点，影响用户体验。
 - 所以要在carrier那边处理在线状态的判断和离线消息的处理等等
 
-# carrier
+## carrier
 - 保证消息到达是针对`某个uid+某个platform`来判定，如果对应项不在线，则依据对应`platform`的`离线存储`策略对消息进行存储。
 - 如果`某个uid`在`同一个platform`有`多个session`，都会投递，但只要`session_id最大`的那个到达也就足够了
 - 整个系统场景下，`某个uid`重复登录`同一个platform`后，其他会话是会异步收到`kickout`消息的
