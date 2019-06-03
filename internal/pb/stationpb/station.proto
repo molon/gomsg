@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package stationpb;
+option go_package = "github.com/molon/gomsg/internal/pb/stationpb";
+
+import "google/protobuf/empty.proto";
+
+service Station {
+    // boat服务在新会话进入后应该调用此方法
+    // 内部根据鉴权信息得到身份信息且记录连接信息，最终返回身份信息
+    rpc Connect(ConnectRequest) returns (ConnectResponse) {}
+    
+    // boat服务在新会话断开之后应该调用此方法
+    // 内部会删除对应连接信息
+    rpc Disconnect(DisconnectRequest) returns (google.protobuf.Empty) {}
+}
+
+message ConnectRequest {
+    // boat服务ID
+    string boat_id = 1;
+    // 会话ID
+    string sid = 2;
+}
+
+message ConnectResponse {
+    // 用户ID
+    string uid = 1;
+    // 平台名称
+    string platform = 2;
+}
+
+message DisconnectRequest {
+    // boat服务ID
+    string boat_id = 1;
+    // 会话ID
+    string sid = 2;
+    // 用户ID
+    string uid = 3;
+}

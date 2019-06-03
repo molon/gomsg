@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package boatpb;
+option go_package = "github.com/molon/gomsg/internal/pb/boatpb";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";
+import "errorpb/code.proto";
+import "msgpb/msg.proto";
+
+// 供carrier调用，执行消息下发
+service Boat {
+    // 向某一个会话id下发消息一堆消息
+    rpc PushMessages(PushMessagesRequest) returns (google.protobuf.Empty) {}
+    // 广播消息
+    rpc BoardcastRoom(BoardcastRoomRequest) returns (google.protobuf.Empty) {}
+    // 踢出会话
+    rpc Kickout(KickoutRequest) returns (google.protobuf.Empty) {}
+}
+
+// 下发消息请求
+message PushMessagesRequest {
+    // 会话id
+    string sid = 1;
+    // ack等待时间
+    google.protobuf.Duration ack_wait = 2;
+    // 一堆消息
+    repeated msgpb.Message msgs = 3;
+}
+
+// 根据房间名称广播消息，此种消息不得ack，不得离线，不得通知
+message BoardcastRoomRequest {
+    // 房间名称
+    string room = 1;
+    // 消息唯一标识
+    string seq = 2;
+    // 消息体
+    google.protobuf.Any body = 3;
+}
+
+message KickoutRequest {
+    // 会话id
+    string sid = 1;
+    // 踢出原因
+    errorpb.Code code = 2;
+}

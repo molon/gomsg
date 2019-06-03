@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package pushpb;
+option go_package = "github.com/molon/gomsg/pb/pushpb";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+import "google/api/annotations.proto";
+import "msgpb/msg.proto";
+
+// 分发消息服务，整个系统的入口
+service Push {
+    rpc Push(PushRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/push"
+            body: "*"
+        };
+    }
+}
+
+message PlatformConfig {
+    // 不为空则表示只发送给这些平台
+    repeated string platforms = 1;
+    // 不为空则表示除了这些平台都需要发送
+    // 此项在 platforms 项不为空时候无效
+    repeated string without_platforms = 2;
+}
+
+message PushRequest {
+    // 接收目标
+    repeated string uids = 1;
+
+    // 平台配置，置空则表示全发送
+    PlatformConfig platform_config = 11;
+    // 针对某用户单独设置平台配置
+    map<string,PlatformConfig> exclusive_platform_config = 12;
+
+    // 消息内容
+    repeated google.protobuf.Any msg_bodies = 21;
+    // 消息特性
+    msgpb.MessageOption msg_options = 22;
+    // 针对某用户单独设置消息特性
+    map<string,msgpb.MessageOption> exclusive_msg_options = 23;
+
+    // 保留给一些特殊业务使用的项目
+    google.protobuf.Any reserve = 88;
+}

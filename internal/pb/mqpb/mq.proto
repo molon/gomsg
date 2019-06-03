@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package mqpb;
+option go_package = "github.com/molon/gomsg/internal/pb/mqpb";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "msgpb/msg.proto";
+import "pushpb/push.proto";
+import "errorpb/code.proto";
+
+// 发给uid的常规消息
+message ToUid {
+    // 接收目标
+    string uid = 1;
+
+    // 平台配置，置空则表示全发送
+    pushpb.PlatformConfig platform_config = 11;
+
+    // 消息列表
+    repeated msgpb.Message msgs = 21;
+
+    // 保留给一些特殊业务使用的项目
+    google.protobuf.Any reserve = 88;
+}
+
+// 踢出某会话
+message KickoutSession {
+    // 接收目标
+    string uid = 1;
+    // 接收会话
+    string sid = 2;
+    // 踢出原因
+    errorpb.Code code = 3;
+}
+
+// 下发离线消息
+message SendOfflineToSession {
+    // 接收目标
+    string uid = 1;
+    // 接收会话
+    string sid = 2;
+}
+
+// 向某用户的某平台发通知提醒消息
+message Notification {
+    // 接收目标
+    string uid = 1;
+    // 接收平台
+    string platform = 2;
+    // 消息内容
+    msgpb.Message msg = 3;
+}
+
+// mq消息wrap
+message Payload {
+    string seq = 1; // mq消息唯一标识，生产者方生成
+    google.protobuf.Timestamp timestamp = 2; // mq消息生产时间
+    int64 retry_count = 3;
+    google.protobuf.Timestamp last_attempt_at = 4; // 上一次尝试时间
+
+    oneof Body {
+        ToUid to_uid = 11;
+        KickoutSession kickout_session = 12;
+        SendOfflineToSession send_offline_to_session = 13;
+        Notification notification = 14;
+	}
+}

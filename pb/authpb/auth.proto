@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package authpb;
+option go_package = "github.com/molon/gomsg/pb/authpb";
+
+import "google/protobuf/empty.proto";
+
+// 供station调用，执行鉴权，需自行实现此服务
+service Auth {
+    // 鉴权
+    rpc Auth(google.protobuf.Empty) returns (AuthResponse) {}
+}
+
+message AuthResponse {
+    // 用户id
+    string uid = 1;
+    // 平台 mobile/desktop 或者 其他
+    string platform = 2;
+}
