@@ -17,6 +17,17 @@ ETCD_CONTAINER_NAME := gomsg-etcd
 JAEGER_CONTAINER_NAME := gomsg-jaeger
 REDIS_CONTAINER_NAME := gomsg-redis
 
+# env
+.PHONY: clean-envs
+clean-envs:
+	@docker stop $(ETCD_CONTAINER_NAME) || true
+	@docker rm $(ETCD_CONTAINER_NAME) || true
+	@docker stop $(REDIS_CONTAINER_NAME) || true
+	@docker rm $(REDIS_CONTAINER_NAME) || true
+	@docker stop $(JAEGER_CONTAINER_NAME) || true
+	@docker rm $(JAEGER_CONTAINER_NAME) || true
+	@rm -rf $(CURDIR)/store/
+
 .PHONY: etcd
 etcd:
 	@docker stop $(ETCD_CONTAINER_NAME) || true
