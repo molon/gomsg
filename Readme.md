@@ -1,5 +1,5 @@
 kafka dev env:   
-git clone git@github.com:wurstmeister/kafka-docker.git
+clone: `git clone git@github.com:wurstmeister/kafka-docker.git`   
 start kafka: `docker-compose -f docker-compose-single-broker.yml up -d`   
 close kafka: `docker-compose down -v`
 
