@@ -35,7 +35,7 @@ var (
 	_ = pflag.Int("http.port", 8080, "port of http server")
 
 	// redis
-	_ = pflag.String("redis.address", "0.0.0.0", "")
+	_ = pflag.String("redis.address", "127.0.0.1", "")
 	_ = pflag.String("redis.port", "9379", "")
 
 	// kafka and producer
