@@ -25,7 +25,7 @@ The project is not yet complete.
 - boat负责保持客户端连接，且和station同步连接状态
 - station负责同步客户端连接状态持久化到redis，且负责向MQ投递推送任务或者一般任务(踢出/下发离线消息)
 - carrier负责消费MQ的推送任务，在线则下发，不在线则离线存储，且根据情况决定是否向MQ投递通知任务
-- carrier负责消费MQ的一般任务，kickout啊，下发离线消息等等。
+- carrier负责消费MQ的一般任务，kickout啊，下发离线消息等等。
 - horn负责消费MQ的通知任务，根据情况决定是调用iOS APNS啊，还是其他的第三方通知服务
   
 ## station 分发任务
