@@ -36,7 +36,7 @@ func pubUidSids(uid string, sids []string, fillBody func(payload *mqpb.Payload, 
 		}
 
 		m := &sarama.ProducerMessage{
-			Key:   sarama.StringEncoder(mw.Seq), // 主要是为了kafka分区而已，此key不用
+			Key:   sarama.StringEncoder(uid), // 主要是为了kafka分区，也能尽可能保证相同uid的消息都被同一个消费者进行消费
 			Topic: global.config.Producer.Topic,
 			Value: sarama.ByteEncoder(b),
 		}
